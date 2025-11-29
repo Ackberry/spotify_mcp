@@ -3,7 +3,6 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-  ListResourcesRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import dotenv from 'dotenv';
 import { SpotifyAuth } from './spotify/auth.js';
@@ -370,12 +369,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       isError: true,
     };
   }
-});
-
-server.setRequestHandler(ListResourcesRequestSchema, async () => {
-  return {
-    resources: [],
-  };
 });
 
 async function main() {

@@ -18,7 +18,7 @@ export class SpotifyClient {
     const api = await this.getApi();
     const data = await api.getUserPlaylists();
     
-    return data.body.items.map(playlist => ({
+    return data.body.items.map((playlist: any) => ({
       id: playlist.id,
       name: playlist.name,
       uri: playlist.uri,
@@ -41,7 +41,7 @@ export class SpotifyClient {
     const api = await this.getApi();
     const data = await api.searchTracks(query, { limit });
     
-    return data.body.tracks?.items.map(track => ({
+    return data.body.tracks?.items.map((track: any) => ({
       id: track.id,
       name: track.name,
       artist: track.artists[0]?.name || 'Unknown',
@@ -54,7 +54,7 @@ export class SpotifyClient {
     const api = await this.getApi();
     const data = await api.searchAlbums(query, { limit });
     
-    return data.body.albums?.items.map(album => ({
+    return data.body.albums?.items.map((album: any) => ({
       id: album.id,
       name: album.name,
       artist: album.artists[0]?.name || 'Unknown',
@@ -66,7 +66,7 @@ export class SpotifyClient {
     const api = await this.getApi();
     const data = await api.searchArtists(query, { limit });
     
-    return data.body.artists?.items.map(artist => ({
+    return data.body.artists?.items.map((artist: any) => ({
       id: artist.id,
       name: artist.name,
       uri: artist.uri,
@@ -82,19 +82,19 @@ export class SpotifyClient {
     ]);
 
     return {
-      tracks: tracksData.body.tracks?.items.map(track => ({
+      tracks: tracksData.body.tracks?.items.map((track: any) => ({
         id: track.id,
         name: track.name,
         artist: track.artists[0]?.name || 'Unknown',
         uri: track.uri,
       })) || [],
-      albums: albumsData.body.albums?.items.map(album => ({
+      albums: albumsData.body.albums?.items.map((album: any) => ({
         id: album.id,
         name: album.name,
         artist: album.artists[0]?.name || 'Unknown',
         uri: album.uri,
       })) || [],
-      artists: artistsData.body.artists?.items.map(artist => ({
+      artists: artistsData.body.artists?.items.map((artist: any) => ({
         id: artist.id,
         name: artist.name,
         uri: artist.uri,
@@ -173,7 +173,7 @@ export class SpotifyClient {
   async getDevices() {
     const api = await this.getApi();
     const data = await api.getMyDevices();
-    return data.body.devices.map(device => ({
+    return data.body.devices.map((device: any) => ({
       id: device.id,
       name: device.name,
       type: device.type,

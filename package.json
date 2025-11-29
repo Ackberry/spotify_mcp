@@ -1,0 +1,34 @@
+{
+  "name": "spotify-mcp-server",
+  "version": "1.0.0",
+  "description": "Spotify MCP server with Siri integration",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts",
+    "bridge": "node dist/http-bridge.js"
+  },
+  "keywords": [
+    "mcp",
+    "spotify",
+    "siri",
+    "shortcuts"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "spotify-web-api-node": "^5.0.2",
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
+

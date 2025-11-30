@@ -1,7 +1,7 @@
 {
   "name": "spotify-mcp-server",
   "version": "1.0.0",
-  "description": "Spotify MCP server with Siri integration",
+  "description": "Spotify MCP server for Google Gemini integration",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {

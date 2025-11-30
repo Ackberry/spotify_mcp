@@ -1,6 +1,6 @@
-# Spotify MCP Server with Siri Integration
+# Spotify MCP Server for Gemini
 
-A Model Context Protocol (MCP) server that exposes Spotify functionality for seamless integration with Siri via Apple Shortcuts.
+A Model Context Protocol (MCP) server that exposes Spotify functionality for seamless integration with Google Gemini models.
 
 ## Features
 
@@ -8,7 +8,7 @@ A Model Context Protocol (MCP) server that exposes Spotify functionality for sea
 - **Search**: Find music by song, artist, or album
 - **Playback Control**: Play, pause, skip, and adjust volume
 - **Sleep Timer**: Automatically pause playback after a specified duration
-- **Siri Integration**: HTTP bridge for Apple Shortcuts
+- **Siri Integration**: HTTP bridge for Apple Shortcuts (optional)
 
 ## Prerequisites
 
@@ -16,6 +16,7 @@ A Model Context Protocol (MCP) server that exposes Spotify functionality for sea
 - npm or yarn
 - Spotify Developer account
 - TypeScript 5.3+
+- Google Gemini API access (or compatible Gemini client)
 
 ## Setup
 
@@ -62,10 +63,19 @@ A Model Context Protocol (MCP) server that exposes Spotify functionality for sea
 
 ## Usage
 
-### MCP Server
+### MCP Server for Gemini
 
-The MCP server runs on stdio and can be used with MCP-compatible clients:
+The MCP server runs on stdio and communicates with Gemini via the Model Context Protocol.
 
+**Quick Setup:**
+
+1. Configure your Gemini client to use the MCP server (see [MCP_SETUP.md](MCP_SETUP.md) for details)
+2. Point it to: `node /path/to/SpotifyMCP/dist/server.js`
+3. Set environment variables for Spotify credentials
+
+**For detailed setup instructions, see [MCP_SETUP.md](MCP_SETUP.md)**
+
+Run the server directly:
 ```bash
 npm start
 ```
@@ -78,9 +88,36 @@ The HTTP bridge exposes REST endpoints for Apple Shortcuts:
 npm run bridge
 ```
 
-## API Endpoints
+## MCP Tools
 
-All endpoints support optional API key authentication via:
+The server exposes the following MCP tools for Gemini:
+
+- `play_playlist` - Play a playlist by name
+- `play_album` - Play an album by name
+- `play_track` - Play a track by name
+- `search_music` - Search for music
+- `control_playback` - Control playback (play, pause, skip, volume)
+- `get_current_playing` - Get currently playing track
+- `set_sleep_timer` - Set a sleep timer
+- `cancel_sleep_timer` - Cancel active timers
+- `get_active_timers` - List active timers
+
+### Example Gemini Interactions
+
+Once configured, you can ask Gemini:
+
+- "Play my workout playlist on Spotify"
+- "Search for songs by The Beatles"
+- "Pause Spotify"
+- "Set a 30 minute sleep timer"
+- "What's currently playing?"
+- "Play the album 'Abbey Road' by The Beatles"
+
+Gemini will automatically use the appropriate MCP tools to execute these commands.
+
+## API Endpoints (HTTP Bridge)
+
+The HTTP bridge provides REST endpoints for Apple Shortcuts integration. All endpoints support optional API key authentication via:
 - Header: `Authorization: Bearer <api_key>`
 - Query parameter: `?apiKey=<api_key>`
 
@@ -177,16 +214,6 @@ Check server status and authentication state.
 5. Add a **"Get Text from Input"** action to parse the response
 6. Add **"Speak Text"** action to have Siri confirm the action
 
-### Example Shortcut: Play Playlist
-
-1. Create shortcut named "Play My Playlist"
-2. Add input action to get playlist name from Siri
-3. Add "Get Contents of URL":
-   - URL: `http://your-server-ip:3001/play/playlist`
-   - Method: POST
-   - Body: `{"playlistName": "[Shortcut Input]"}`
-4. Add "Speak Text" to confirm
-
 ### Example Voice Commands
 
 - "Hey Siri, play my workout playlist"
@@ -204,20 +231,6 @@ For local network access:
 3. Ensure your Mac's firewall allows connections on port 3001
 
 For internet access, deploy the server to a cloud provider.
-
-## MCP Tools
-
-The server exposes the following MCP tools:
-
-- `play_playlist` - Play a playlist by name
-- `play_album` - Play an album by name
-- `play_track` - Play a track by name
-- `search_music` - Search for music
-- `control_playback` - Control playback (play, pause, skip, volume)
-- `get_current_playing` - Get currently playing track
-- `set_sleep_timer` - Set a sleep timer
-- `cancel_sleep_timer` - Cancel active timers
-- `get_active_timers` - List active timers
 
 ## Development
 
@@ -273,7 +286,13 @@ src/
 - Check firewall settings
 - Ensure the server is accessible on your network
 
+### Gemini Integration Issues
+
+- Verify the absolute path to `dist/server.js` is correct
+- Check environment variables are set properly
+- Ensure Node.js is in PATH or use full path to node
+- Review [MCP_SETUP.md](MCP_SETUP.md) for detailed troubleshooting
+
 ## License
 
 MIT
-

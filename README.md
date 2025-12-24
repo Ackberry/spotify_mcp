@@ -5,7 +5,6 @@ A Model Context Protocol (MCP) server that enables Google Gemini CLI to control 
 ## Features
 
 - **Play Control**: Play playlists, albums, and tracks
-- **Random Song**: Play a random song from Spotify
 - **Search**: Find music by song, artist, or album
 - **Playback Control**: Play, pause, skip, and adjust volume
 - **Sleep Timer**: Automatically pause playback after a specified duration
@@ -44,10 +43,7 @@ Create a `.env` file in the project root:
 SPOTIFY_CLIENT_ID=your_client_id_here
 SPOTIFY_CLIENT_SECRET=your_client_secret_here
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
-SPOTIFY_DEVICE_ID=your_device_id_here
 ```
-
-**Note:** `SPOTIFY_DEVICE_ID` is optional. If set, it will be used as the default device for all playback operations. You can also set it dynamically using the `set_default_device` tool.
 
 ### 4. Authenticate
 
@@ -59,25 +55,24 @@ This opens your browser for Spotify authorization and saves tokens to `tokens.js
 
 ### 5. Configure Gemini CLI
 
-Create `.gemini/settings.json` in your project directory:
+Generate `.gemini/settings.json` from your `.env` file:
 
 ```bash
-mkdir -p .gemini
+npm run setup:gemini
 ```
 
-The config file uses environment variable references (like `${SPOTIFY_CLIENT_ID}`) that automatically read from your `.env` file. You only need to:
+This script automatically:
+- Reads your `.env` file
+- Creates `.gemini/settings.json` with the correct paths and API keys
+- Populates all environment variables from your `.env` file
 
-1. Edit `.gemini/settings.json`
-2. Replace `/absolute/path/to/SpotifyMCP/dist/server.js` with your actual path
-
-That's it! The API keys will be automatically read from your `.env` file - no need to copy them manually.
+**Note:** Run `npm run setup:gemini` again whenever you update your `.env` file or after building the project.
 
 ### 6. Use It!
 
 Once configured, start Gemini CLI and ask:
 
 - "Play my Discover Weekly playlist"
-- "Play a random song"
 - "Search for songs by The Beatles"
 - "Pause Spotify"
 - "Set a 30 minute sleep timer"
@@ -88,30 +83,12 @@ Once configured, start Gemini CLI and ask:
 - `play_playlist` - Play a playlist by name
 - `play_album` - Play an album by name
 - `play_track` - Play a track by name
-- `play_random_song` - Play a random song from Spotify
 - `search_music` - Search for music
 - `control_playback` - Control playback (play, pause, skip, volume)
 - `get_current_playing` - Get currently playing track
 - `set_sleep_timer` - Set a sleep timer
 - `cancel_sleep_timer` - Cancel active timers
 - `get_active_timers` - List active timers
-- `get_devices` - List all available Spotify devices
-- `set_default_device` - Set the default device ID for playback operations
-
-## Device Management
-
-To use Spotify commands without having music currently playing, you need to specify a device ID. You can:
-
-**Option 1: Set in .env file** (persistent)
-```env
-SPOTIFY_DEVICE_ID=your_device_id_here
-```
-
-**Option 2: Set dynamically using tools**
-1. First, get available devices: Ask Gemini "List my Spotify devices"
-2. Set the default device: "Set default Spotify device to [device_id]"
-
-Once a default device is set, all playback commands will use it automatically.
 
 ## Troubleshooting
 

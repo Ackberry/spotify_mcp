@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "spotify": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/SpotifyMCP/dist/server.js"
+      ],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "YOUR_SPOTIFY_CLIENT_ID_HERE",
+        "SPOTIFY_CLIENT_SECRET": "YOUR_SPOTIFY_CLIENT_SECRET_HERE",
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback",
+        "SPOTIFY_DEVICE_ID": "YOUR_DEVICE_ID_HERE_OPTIONAL"
+      }
+    }
+  }
+}

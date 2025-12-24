@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "bridge": "node dist/http-bridge.js",
-    "auth": "tsx src/auth-helper.ts"
+    "auth": "tsx src/auth-helper.ts",
+    "setup:gemini": "node scripts/generate-gemini-config.js"
   },
   "keywords": [
     "mcp",

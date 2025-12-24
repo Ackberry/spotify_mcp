@@ -64,30 +64,12 @@ Create `.gemini/settings.json` in your project directory:
 mkdir -p .gemini
 ```
 
-The config file uses environment variables from your `.env` file. Just update the path:
+The config file uses environment variable references (like `${SPOTIFY_CLIENT_ID}`) that automatically read from your `.env` file. You only need to:
 
-Edit `.gemini/settings.json` and replace:
-- `/absolute/path/to/SpotifyMCP/dist/server.js` → Your actual path to `dist/server.js`
+1. Edit `.gemini/settings.json`
+2. Replace `/absolute/path/to/SpotifyMCP/dist/server.js` with your actual path
 
-The environment variables (`${SPOTIFY_CLIENT_ID}`, `${SPOTIFY_CLIENT_SECRET}`, etc.) will be automatically read from your `.env` file by Gemini CLI.
-
-#### Method 2: Environment Variables + Command Flag
-
-```bash
-export SPOTIFY_CLIENT_ID="your_client_id"
-export SPOTIFY_CLIENT_SECRET="your_client_secret"
-export SPOTIFY_REDIRECT_URI="http://127.0.0.1:3000/callback"
-
-gemini chat --mcp-server="node $(pwd)/dist/server.js"
-```
-
-#### Method 3: Direct Path (if Gemini CLI supports it)
-
-```bash
-gemini chat --mcp node /absolute/path/to/SpotifyMCP/dist/server.js
-```
-
-**Note:** Check your Gemini CLI documentation for the exact MCP server configuration method. The server communicates via stdio using the MCP protocol.
+That's it! The API keys will be automatically read from your `.env` file - no need to copy them manually.
 
 ### 6. Use It!
 

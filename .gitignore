@@ -6,5 +6,6 @@ tokens.json
 *.log
 .DS_Store
 
-.gemini/
-!.gemini/*.example
+.gemini/settings.json
+.idx/mcp.json
+!.gemini/settings.json

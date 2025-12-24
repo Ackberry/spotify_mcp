@@ -58,24 +58,17 @@ This opens your browser for Spotify authorization and saves tokens to `tokens.js
 
 ### 5. Configure Gemini CLI
 
-Create `.gemini/settings.json` in your project directory (or check Gemini CLI docs for config location):
+Create `.gemini/settings.json` in your project directory and fill in the placeholders:
 
 ```bash
 mkdir -p .gemini
-cp .gemini/settings.json.example .gemini/settings.json
 ```
 
-Then edit `.gemini/settings.json` and replace the placeholder values:
-- Replace `/absolute/path/to/SpotifyMCP/dist/server.js` with your actual path
-- Replace `YOUR_SPOTIFY_CLIENT_ID_HERE` with your Client ID from `.env`
-- Replace `YOUR_SPOTIFY_CLIENT_SECRET_HERE` with your Client Secret from `.env`
-- Replace `YOUR_DEVICE_ID_HERE_OPTIONAL` with your device ID (or remove this line if not using)
-
-#### Method 1: Config File (if supported)
-
-The config file is already created in the project: `.gemini/config.json`
-
-If Gemini CLI supports project-level config, it will use this file. Otherwise, you may need to copy it to `~/.gemini/config.json` or check Gemini CLI docs for the config location.
+Edit `.gemini/settings.json` and replace:
+- `/absolute/path/to/SpotifyMCP/dist/server.js` → Your actual path to `dist/server.js`
+- `YOUR_SPOTIFY_CLIENT_ID_HERE` → Your Client ID from `.env`
+- `YOUR_SPOTIFY_CLIENT_SECRET_HERE` → Your Client Secret from `.env`
+- `YOUR_DEVICE_ID_HERE_OPTIONAL` → Your device ID (optional, can remove this line)
 
 #### Method 2: Environment Variables + Command Flag
 

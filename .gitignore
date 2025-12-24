@@ -6,3 +6,4 @@ tokens.json
 *.log
 .DS_Store
 
+.gemini/

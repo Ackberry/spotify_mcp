@@ -181,5 +181,24 @@ export class SpotifyClient {
       volumePercent: device.volume_percent || 0,
     }));
   }
+
+  async getRandomTrack(): Promise<{ id: string; name: string; artist: string; uri: string; album: string }> {
+    const randomChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const randomChar = randomChars[Math.floor(Math.random() * randomChars.length)];
+    
+    const tracks = await this.searchTracks(randomChar, 50);
+    
+    if (tracks.length === 0) {
+      const fallbackTracks = await this.searchTracks('the', 50);
+      if (fallbackTracks.length === 0) {
+        throw new Error('Could not find any tracks');
+      }
+      const randomIndex = Math.floor(Math.random() * fallbackTracks.length);
+      return fallbackTracks[randomIndex];
+    }
+    
+    const randomIndex = Math.floor(Math.random() * tracks.length);
+    return tracks[randomIndex];
+  }
 }
 

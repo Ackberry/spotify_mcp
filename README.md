@@ -5,6 +5,7 @@ A Model Context Protocol (MCP) server that enables Google Gemini CLI to control 
 ## Features
 
 - **Play Control**: Play playlists, albums, and tracks
+- **Random Song**: Play a random song from Spotify
 - **Search**: Find music by song, artist, or album
 - **Playback Control**: Play, pause, skip, and adjust volume
 - **Sleep Timer**: Automatically pause playback after a specified duration
@@ -76,6 +77,7 @@ That's it! The API keys will be automatically read from your `.env` file - no ne
 Once configured, start Gemini CLI and ask:
 
 - "Play my Discover Weekly playlist"
+- "Play a random song"
 - "Search for songs by The Beatles"
 - "Pause Spotify"
 - "Set a 30 minute sleep timer"

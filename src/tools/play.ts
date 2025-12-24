@@ -62,3 +62,19 @@ export async function playTrack(client: SpotifyClient, trackName: string, artist
   };
 }
 
+export async function playRandomSong(client: SpotifyClient, deviceId?: string) {
+  const track = await client.getRandomTrack();
+  await client.playTrack(track.uri, deviceId);
+  
+  return {
+    success: true,
+    message: `Playing random track: ${track.name} by ${track.artist}`,
+    track: {
+      id: track.id,
+      name: track.name,
+      artist: track.artist,
+      album: track.album,
+    },
+  };
+}
+

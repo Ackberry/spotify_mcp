@@ -114,6 +114,19 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: 'play_random_song',
+        description: 'Play a random song from Spotify',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            deviceId: {
+              type: 'string',
+              description: 'Optional device ID to play on',
+            },
+          },
+        },
+      },
+      {
         name: 'search_music',
         description: 'Search for music (tracks, albums, artists) on Spotify',
         inputSchema: {
@@ -287,6 +300,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: 'text',
               text: JSON.stringify(trackResult, null, 2),
+            },
+          ],
+        };
+
+      case 'play_random_song':
+        const randomSongResult = await playTools.playRandomSong(
+          client,
+          deviceManager.getDevice(args?.deviceId as string | undefined)
+        );
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(randomSongResult, null, 2),
             },
           ],
         };

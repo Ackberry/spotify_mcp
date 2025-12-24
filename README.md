@@ -88,6 +88,7 @@ Once configured, start Gemini CLI and ask:
 - `play_playlist` - Play a playlist by name
 - `play_album` - Play an album by name
 - `play_track` - Play a track by name
+- `play_random_song` - Play a random song from Spotify
 - `search_music` - Search for music
 - `control_playback` - Control playback (play, pause, skip, volume)
 - `get_current_playing` - Get currently playing track

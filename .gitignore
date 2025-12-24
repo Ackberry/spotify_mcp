@@ -7,3 +7,4 @@ tokens.json
 .DS_Store
 
 .gemini/
+!.gemini/*.example

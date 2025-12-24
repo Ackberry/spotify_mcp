@@ -1,5 +1,9 @@
 import { SpotifyClient } from '../spotify/client.js';
 
+// Rate limiting for skip actions to prevent loops
+const lastSkipTime = new Map<string, number>();
+const SKIP_COOLDOWN_MS = 1000; // 1 second cooldown between skips
+
 export async function controlPlayback(
   client: SpotifyClient,
   action: 'play' | 'pause' | 'skip-next' | 'skip-previous' | 'volume',
@@ -15,13 +19,37 @@ export async function controlPlayback(
       await client.pause(deviceId);
       return { success: true, message: 'Playback paused' };
     
-    case 'skip-next':
+    case 'skip-next': {
+      const now = Date.now();
+      const lastTime = lastSkipTime.get('skip-next') || 0;
+      
+      if (now - lastTime < SKIP_COOLDOWN_MS) {
+        return { 
+          success: true, 
+          message: 'Skipped to next track (rate limited - already skipped recently)' 
+        };
+      }
+      
       await client.skipToNext(deviceId);
-      return { success: true, message: 'Skipped to next track' };
+      lastSkipTime.set('skip-next', now);
+      return { success: true, message: 'Skipped to next track once' };
+    }
     
-    case 'skip-previous':
+    case 'skip-previous': {
+      const now = Date.now();
+      const lastTime = lastSkipTime.get('skip-previous') || 0;
+      
+      if (now - lastTime < SKIP_COOLDOWN_MS) {
+        return { 
+          success: true, 
+          message: 'Skipped to previous track (rate limited - already skipped recently)' 
+        };
+      }
+      
       await client.skipToPrevious(deviceId);
-      return { success: true, message: 'Skipped to previous track' };
+      lastSkipTime.set('skip-previous', now);
+      return { success: true, message: 'Skipped to previous track once' };
+    }
     
     case 'volume':
       if (value === undefined || value < 0 || value > 100) {

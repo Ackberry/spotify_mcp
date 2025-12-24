@@ -1,6 +1,6 @@
-# Spotify MCP Server for Gemini
+# Spotify MCP Server for Gemini CLI
 
-A Model Context Protocol (MCP) server that exposes Spotify functionality for seamless integration with Google Gemini models.
+A Model Context Protocol (MCP) server that enables Google Gemini CLI to control Spotify through natural language commands.
 
 ## Features
 
@@ -8,99 +8,93 @@ A Model Context Protocol (MCP) server that exposes Spotify functionality for sea
 - **Search**: Find music by song, artist, or album
 - **Playback Control**: Play, pause, skip, and adjust volume
 - **Sleep Timer**: Automatically pause playback after a specified duration
-- **Siri Integration**: HTTP bridge for Apple Shortcuts (optional)
 
 ## Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 - Spotify Developer account
-- TypeScript 5.3+
-- Google IDX workspace (recommended) OR Google Gemini API access (or compatible Gemini client)
+- Google Gemini CLI installed (`npm install -g @google/gemini-cli`)
 
-## Setup
+## Quick Start
 
-### 1. Spotify Developer Setup
+### 1. Install Dependencies
+
+```bash
+npm install
+npm run build
+```
+
+### 2. Spotify Developer Setup
 
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Create a new app
-3. Note your **Client ID** and **Client Secret**
-4. Add a redirect URI: `http://127.0.0.1:3000/callback` (or your preferred URI)
+3. Copy your **Client ID** and **Client Secret**
+4. Click "Edit Settings" → Add redirect URI: `http://127.0.0.1:3000/callback`
+5. Click "Save"
 
-### 2. Project Setup
+**Important:** Spotify requires `127.0.0.1` (not `localhost`) for redirect URIs.
 
-1. Clone or download this repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### 3. Configure Environment
 
-3. Create a `.env` file in the root directory:
-   ```env
-   SPOTIFY_CLIENT_ID=your_client_id_here
-   SPOTIFY_CLIENT_SECRET=your_client_secret_here
-   SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
-   HTTP_BRIDGE_PORT=3001
-   HTTP_BRIDGE_API_KEY=your_optional_api_key_here
-   ```
+Create a `.env` file in the project root:
 
-4. Build the project:
-   ```bash
-   npm run build
-   ```
-
-### 3. Authentication
-
-1. Start the server:
-   ```bash
-   npm start
-   ```
-
-2. The server will guide you through the OAuth flow if you're not authenticated
-3. Visit the provided authorization URL
-4. Authorize the app and copy the callback code
-5. The tokens will be saved automatically in `tokens.json`
-
-## Usage
-
-### MCP Server for Google IDX (Recommended)
-
-**For Google IDX setup, see the detailed guide: [IDX_SETUP.md](IDX_SETUP.md)**
-
-Google IDX provides the easiest way to use this MCP server with AI assistance. The setup guide covers:
-- Installing dependencies
-- Configuring `.idx/mcp.json`
-- Authentication
-- Troubleshooting
-
-### MCP Server for Other Gemini Clients
-
-The MCP server runs on stdio and communicates via the Model Context Protocol.
-
-**Quick Setup:**
-
-1. Configure your Gemini client to use the MCP server (see [MCP_SETUP.md](MCP_SETUP.md) for details)
-2. Point it to: `node /path/to/SpotifyMCP/dist/server.js`
-3. Set environment variables for Spotify credentials
-
-**For detailed setup instructions, see [MCP_SETUP.md](MCP_SETUP.md)**
-
-Run the server directly:
-```bash
-npm start
+```env
+SPOTIFY_CLIENT_ID=your_client_id_here
+SPOTIFY_CLIENT_SECRET=your_client_secret_here
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
+SPOTIFY_DEVICE_ID=your_device_id_here
 ```
 
-### HTTP Bridge (for Siri/Shortcuts)
+**Note:** `SPOTIFY_DEVICE_ID` is optional. If set, it will be used as the default device for all playback operations. You can also set it dynamically using the `set_default_device` tool.
 
-The HTTP bridge exposes REST endpoints for Apple Shortcuts:
+### 4. Authenticate
 
 ```bash
-npm run bridge
+npm run auth
 ```
 
-## MCP Tools
+This opens your browser for Spotify authorization and saves tokens to `tokens.json` (one-time setup).
 
-The server exposes the following MCP tools for Gemini:
+### 5. Configure Gemini CLI
+
+Gemini CLI needs to know about your MCP server. The exact method depends on your Gemini CLI version:
+
+#### Method 1: Config File (if supported)
+
+The config file is already created in the project: `.gemini/config.json`
+
+If Gemini CLI supports project-level config, it will use this file. Otherwise, you may need to copy it to `~/.gemini/config.json` or check Gemini CLI docs for the config location.
+
+#### Method 2: Environment Variables + Command Flag
+
+```bash
+export SPOTIFY_CLIENT_ID="your_client_id"
+export SPOTIFY_CLIENT_SECRET="your_client_secret"
+export SPOTIFY_REDIRECT_URI="http://127.0.0.1:3000/callback"
+
+gemini chat --mcp-server="node $(pwd)/dist/server.js"
+```
+
+#### Method 3: Direct Path (if Gemini CLI supports it)
+
+```bash
+gemini chat --mcp node /absolute/path/to/SpotifyMCP/dist/server.js
+```
+
+**Note:** Check your Gemini CLI documentation for the exact MCP server configuration method. The server communicates via stdio using the MCP protocol.
+
+### 6. Use It!
+
+Once configured, start Gemini CLI and ask:
+
+- "Play my Discover Weekly playlist"
+- "Search for songs by The Beatles"
+- "Pause Spotify"
+- "Set a 30 minute sleep timer"
+- "What's currently playing?"
+
+## Available MCP Tools
 
 - `play_playlist` - Play a playlist by name
 - `play_album` - Play an album by name
@@ -111,151 +105,59 @@ The server exposes the following MCP tools for Gemini:
 - `set_sleep_timer` - Set a sleep timer
 - `cancel_sleep_timer` - Cancel active timers
 - `get_active_timers` - List active timers
+- `get_devices` - List all available Spotify devices
+- `set_default_device` - Set the default device ID for playback operations
 
-### Example Gemini Interactions
+## Device Management
 
-Once configured, you can ask Gemini:
+To use Spotify commands without having music currently playing, you need to specify a device ID. You can:
 
-- "Play my workout playlist on Spotify"
-- "Search for songs by The Beatles"
-- "Pause Spotify"
-- "Set a 30 minute sleep timer"
-- "What's currently playing?"
-- "Play the album 'Abbey Road' by The Beatles"
-
-Gemini will automatically use the appropriate MCP tools to execute these commands.
-
-## API Endpoints (HTTP Bridge)
-
-The HTTP bridge provides REST endpoints for Apple Shortcuts integration. All endpoints support optional API key authentication via:
-- Header: `Authorization: Bearer <api_key>`
-- Query parameter: `?apiKey=<api_key>`
-
-### Play Endpoints
-
-**POST** `/play/playlist`
-```json
-{
-  "playlistName": "My Playlist",
-  "deviceId": "optional_device_id"
-}
+**Option 1: Set in .env file** (persistent)
+```env
+SPOTIFY_DEVICE_ID=your_device_id_here
 ```
 
-**POST** `/play/album`
-```json
-{
-  "albumName": "Album Name",
-  "artistName": "Artist Name",
-  "deviceId": "optional_device_id"
-}
-```
+**Option 2: Set dynamically using tools**
+1. First, get available devices: Ask Gemini "List my Spotify devices"
+2. Set the default device: "Set default Spotify device to [device_id]"
 
-**POST** `/play/track`
-```json
-{
-  "trackName": "Song Name",
-  "artistName": "Artist Name",
-  "deviceId": "optional_device_id"
-}
-```
+Once a default device is set, all playback commands will use it automatically.
 
-### Search
+## Troubleshooting
 
-**GET** `/search?q=query&limit=10`
+### Authentication Issues
 
-Returns search results for tracks, albums, and artists.
+- **Redirect URI mismatch**: Ensure `.env` and Spotify Dashboard have the exact same URI (`http://127.0.0.1:3000/callback`)
+- **Invalid redirect URI**: Must use `127.0.0.1` not `localhost` (Spotify requirement)
+- **Token expired**: Delete `tokens.json` and run `npm run auth` again
 
-### Playback Control
+### Gemini CLI Not Finding Server
 
-**POST** `/control`
-```json
-{
-  "action": "play|pause|skip-next|skip-previous|volume",
-  "value": 50,
-  "deviceId": "optional_device_id"
-}
-```
+- Verify absolute path to `dist/server.js` is correct
+- Check environment variables are set (if using Method 2)
+- Ensure Node.js is in PATH
+- Test server manually: `node dist/server.js` (should start without errors)
 
-**GET** `/now-playing`
+### Server Errors
 
-Returns information about the currently playing track.
-
-### Timer
-
-**POST** `/timer/set`
-```json
-{
-  "durationMinutes": 30
-}
-```
-
-**POST** `/timer/cancel`
-```json
-{
-  "timerId": "optional_timer_id"
-}
-```
-
-**GET** `/timer/list`
-
-Returns all active timers.
-
-### Health
-
-**GET** `/health`
-
-Check server status and authentication state.
-
-## Apple Shortcuts Integration
-
-### Setting Up Shortcuts
-
-1. Open the **Shortcuts** app on your iPhone/iPad
-2. Create a new shortcut
-3. Add a **"Get Contents of URL"** action
-4. Configure:
-   - **Method**: POST (or GET for search/now-playing)
-   - **URL**: `http://your-server-ip:3001/play/playlist`
-   - **Headers**: 
-     - `Content-Type: application/json`
-     - `Authorization: Bearer <your_api_key>` (if using API key)
-   - **Request Body**: JSON with required parameters
-
-5. Add a **"Get Text from Input"** action to parse the response
-6. Add **"Speak Text"** action to have Siri confirm the action
-
-### Example Voice Commands
-
-- "Hey Siri, play my workout playlist"
-- "Hey Siri, pause Spotify"
-- "Hey Siri, set a 30 minute sleep timer"
-- "Hey Siri, what's playing on Spotify?"
-- "Hey Siri, play [song name] by [artist]"
-
-### Running the Server for Shortcuts
-
-For local network access:
-
-1. Find your Mac's IP address: `ifconfig | grep "inet "`
-2. Use that IP in Shortcuts: `http://192.168.1.x:3001/...`
-3. Ensure your Mac's firewall allows connections on port 3001
-
-For internet access, deploy the server to a cloud provider.
+- Make sure Spotify app is open and a device is active
+- Verify `tokens.json` exists and is valid
+- Check network connectivity
 
 ## Development
 
 ```bash
-# Development mode with auto-reload
-npm run dev
-
 # Build TypeScript
 npm run build
 
-# Run MCP server
+# Run MCP server (for testing)
 npm start
 
-# Run HTTP bridge
-npm run bridge
+# Authenticate with Spotify
+npm run auth
+
+# Development mode (auto-reload)
+npm run dev
 ```
 
 ## Project Structure
@@ -263,45 +165,13 @@ npm run bridge
 ```
 src/
   server.ts              # MCP server entry point
-  http-bridge.ts         # HTTP server for Shortcuts
+  auth-helper.ts         # Authentication helper script
   spotify/
     auth.ts             # OAuth authentication
     client.ts           # Spotify API client
-  tools/
-    play.ts             # Play operations
-    search.ts           # Search operations
-    playback.ts         # Playback control
-    timer.ts            # Timer operations
+  tools/                # MCP tool implementations
   timer.ts              # Timer manager
-  types.ts              # Type definitions
 ```
-
-## Troubleshooting
-
-### Authentication Issues
-
-- Ensure your redirect URI matches exactly in Spotify Dashboard
-- Check that tokens.json is created and contains valid tokens
-- Re-authenticate by deleting tokens.json and restarting
-
-### Device Not Found
-
-- Make sure a Spotify device is active (app open and playing)
-- Use the device selection in the Spotify app
-- Check device availability via Spotify API
-
-### Connection Issues
-
-- Verify the HTTP bridge port (default: 3001) is not blocked
-- Check firewall settings
-- Ensure the server is accessible on your network
-
-### Gemini Integration Issues
-
-- Verify the absolute path to `dist/server.js` is correct
-- Check environment variables are set properly
-- Ensure Node.js is in PATH or use full path to node
-- Review [MCP_SETUP.md](MCP_SETUP.md) for detailed troubleshooting
 
 ## License
 

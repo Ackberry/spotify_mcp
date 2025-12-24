@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import { SpotifyAuth } from './spotify/auth.js';
 import { SpotifyClient } from './spotify/client.js';
 import { TimerManager } from './timer.js';
+import { DeviceManager } from './device-manager.js';
 import * as playTools from './tools/play.js';
 import * as searchTools from './tools/search.js';
 import * as playbackTools from './tools/playback.js';
@@ -18,6 +19,7 @@ dotenv.config();
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || '';
 const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI || 'http://127.0.0.1:3000/callback';
+const DEFAULT_DEVICE_ID = process.env.SPOTIFY_DEVICE_ID || '';
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
   console.error('Missing SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET in environment variables');
@@ -32,6 +34,7 @@ const auth = new SpotifyAuth({
 
 const client = new SpotifyClient(auth);
 const timerManager = new TimerManager(client);
+const deviceManager = new DeviceManager(DEFAULT_DEVICE_ID || undefined);
 
 const server = new Server(
   {
@@ -130,14 +133,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'control_playback',
-        description: 'Control Spotify playback (play, pause, skip, volume)',
+        description: 'Control Spotify playback (play, pause, skip, volume). Note: skip-next and skip-previous will only skip once per call.',
         inputSchema: {
           type: 'object',
           properties: {
             action: {
               type: 'string',
               enum: ['play', 'pause', 'skip-next', 'skip-previous', 'volume'],
-              description: 'Action to perform',
+              description: 'Action to perform. Use skip-next or skip-previous to skip to the next/previous track ONCE.',
             },
             value: {
               type: 'number',
@@ -194,6 +197,28 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {},
         },
       },
+      {
+        name: 'get_devices',
+        description: 'Get list of available Spotify devices and the current default device',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
+      {
+        name: 'set_default_device',
+        description: 'Set the default Spotify device ID to use for all playback operations',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            deviceId: {
+              type: 'string',
+              description: 'Device ID to set as default',
+            },
+          },
+          required: ['deviceId'],
+        },
+      },
     ],
   };
 });
@@ -223,7 +248,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const playlistResult = await playTools.playPlaylist(
           client,
           args?.playlistName as string,
-          args?.deviceId as string | undefined
+          deviceManager.getDevice(args?.deviceId as string | undefined)
         );
         return {
           content: [
@@ -239,7 +264,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           client,
           args?.albumName as string,
           args?.artistName as string | undefined,
-          args?.deviceId as string | undefined
+          deviceManager.getDevice(args?.deviceId as string | undefined)
         );
         return {
           content: [
@@ -255,7 +280,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           client,
           args?.trackName as string,
           args?.artistName as string | undefined,
-          args?.deviceId as string | undefined
+          deviceManager.getDevice(args?.deviceId as string | undefined)
         );
         return {
           content: [
@@ -286,7 +311,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           client,
           args?.action as 'play' | 'pause' | 'skip-next' | 'skip-previous' | 'volume',
           args?.value as number | undefined,
-          args?.deviceId as string | undefined
+          deviceManager.getDevice(args?.deviceId as string | undefined)
         );
         return {
           content: [
@@ -343,6 +368,51 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: 'text',
               text: JSON.stringify(timersResult, null, 2),
+            },
+          ],
+        };
+
+      case 'get_devices':
+        const devices = await client.getDevices();
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                success: true,
+                devices,
+                defaultDevice: deviceManager.getDefaultDevice(),
+              }, null, 2),
+            },
+          ],
+        };
+
+      case 'set_default_device':
+        const deviceId = args?.deviceId as string;
+        if (!deviceId) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify({
+                  success: false,
+                  error: 'deviceId is required',
+                }, null, 2),
+              },
+            ],
+            isError: true,
+          };
+        }
+        deviceManager.setDefaultDevice(deviceId);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                success: true,
+                message: `Default device set to: ${deviceId}`,
+                deviceId,
+              }, null, 2),
             },
           ],
         };

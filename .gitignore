@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .env
+tokens.json
+.idx/mcp.json
 *.log
 .DS_Store
 

@@ -17,7 +17,7 @@ dotenv.config();
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || '';
-const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI || 'http://localhost:3000/callback';
+const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI || 'http://127.0.0.1:3000/callback';
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
   console.error('Missing SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET in environment variables');

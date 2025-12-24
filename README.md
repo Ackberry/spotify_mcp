@@ -16,7 +16,7 @@ A Model Context Protocol (MCP) server that exposes Spotify functionality for sea
 - npm or yarn
 - Spotify Developer account
 - TypeScript 5.3+
-- Google Gemini API access (or compatible Gemini client)
+- Google IDX workspace (recommended) OR Google Gemini API access (or compatible Gemini client)
 
 ## Setup
 
@@ -25,7 +25,7 @@ A Model Context Protocol (MCP) server that exposes Spotify functionality for sea
 1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Create a new app
 3. Note your **Client ID** and **Client Secret**
-4. Add a redirect URI: `http://localhost:3000/callback` (or your preferred URI)
+4. Add a redirect URI: `http://127.0.0.1:3000/callback` (or your preferred URI)
 
 ### 2. Project Setup
 
@@ -39,7 +39,7 @@ A Model Context Protocol (MCP) server that exposes Spotify functionality for sea
    ```env
    SPOTIFY_CLIENT_ID=your_client_id_here
    SPOTIFY_CLIENT_SECRET=your_client_secret_here
-   SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
+   SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
    HTTP_BRIDGE_PORT=3001
    HTTP_BRIDGE_API_KEY=your_optional_api_key_here
    ```
@@ -63,9 +63,19 @@ A Model Context Protocol (MCP) server that exposes Spotify functionality for sea
 
 ## Usage
 
-### MCP Server for Gemini
+### MCP Server for Google IDX (Recommended)
 
-The MCP server runs on stdio and communicates with Gemini via the Model Context Protocol.
+**For Google IDX setup, see the detailed guide: [IDX_SETUP.md](IDX_SETUP.md)**
+
+Google IDX provides the easiest way to use this MCP server with AI assistance. The setup guide covers:
+- Installing dependencies
+- Configuring `.idx/mcp.json`
+- Authentication
+- Troubleshooting
+
+### MCP Server for Other Gemini Clients
+
+The MCP server runs on stdio and communicates via the Model Context Protocol.
 
 **Quick Setup:**
 

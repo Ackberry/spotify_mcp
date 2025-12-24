@@ -3,11 +3,11 @@
     "spotify": {
       "command": "node",
       "args": [
-        "/absolute/path/to/SpotifyMCP/dist/server.js"
+        "${workspaceFolder}/dist/server.js"
       ],
       "env": {
-        "SPOTIFY_CLIENT_ID": "your_client_id_here",
-        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+        "SPOTIFY_CLIENT_ID": "${env:SPOTIFY_CLIENT_ID}",
+        "SPOTIFY_CLIENT_SECRET": "${env:SPOTIFY_CLIENT_SECRET}",
         "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
       }
     }

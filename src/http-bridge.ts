@@ -12,7 +12,7 @@ dotenv.config();
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || '';
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || '';
-const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI || 'http://localhost:3000/callback';
+const REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI || 'http://127.0.0.1:3000/callback';
 const HTTP_PORT = parseInt(process.env.HTTP_BRIDGE_PORT || '3001', 10);
 const API_KEY = process.env.HTTP_BRIDGE_API_KEY || '';
 

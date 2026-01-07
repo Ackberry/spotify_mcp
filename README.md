@@ -140,6 +140,4 @@ src/
   timer.ts              # Timer manager
 ```
 
-## License
 
-MIT
